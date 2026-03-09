@@ -24,3 +24,6 @@ target
 # Added by cargo
 
 /target
+
+# Ignore the workspace file created by Obsidian, which contains user-specific settings and should not be shared.
+.obsidian/workspace.json

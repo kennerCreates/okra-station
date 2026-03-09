@@ -1,0 +1,2 @@
+- setup github + rust
+- 
