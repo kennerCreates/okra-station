@@ -1,3 +1,4 @@
+use bevy::prelude::*;
 use std::vec;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
@@ -35,6 +36,12 @@ impl PartialOrd for Node {
 }
 
 fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .run();
+}
+
+fn oldmain(){
     let grid = vec![
         vec![false, false, false, false, false],
         vec![false, true, true, true, false],
@@ -88,7 +95,6 @@ fn main() {
         }
     }
 }
-
 fn heuristic(a: Point, b: Point) -> f32 {
     let dx = (a.x as f32 - b.x as f32).abs();
     let dy = (a.y as f32 - b.y as f32).abs();
