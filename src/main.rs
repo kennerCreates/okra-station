@@ -53,20 +53,20 @@ fn main() {
 
 fn setup(mut commands: Commands, grid: Res<Grid>){
     commands.spawn(Camera2d);
-    let start = Point { x: 0, y: 0 };
-    let goal = Point { x: 4, y: 4 };
+    let start = Point { x: 1, y: 1 };
+    let goal = Point { x: 19, y: 19 };
     if let Some(path) = astar(start, goal, &grid.cells){
     for (y, row) in grid.cells.iter().enumerate() {
             for (x, cell) in row.iter().enumerate() {
-                let x_position = x as f32 * 50.0;
-                let y_position = -(y as f32) * 50.0;
+                let x_position = x as f32 * 10.0;
+                let y_position = -(y as f32) * 10.0;
                 let point = Point{x, y };
                 
                 if path.contains(&point) {
                     commands.spawn((
                         Sprite{
                             color: Color::srgb(0.75,0.0,0.05),
-                            custom_size: Some(Vec2::new(50.0, 50.0)),
+                            custom_size: Some(Vec2::new(10.0, 10.0)),
                             ..default()
                         },
                         Transform::from_xyz(x_position, y_position, 0.0),
@@ -75,7 +75,7 @@ fn setup(mut commands: Commands, grid: Res<Grid>){
                     commands.spawn((
                         Sprite{
                             color: Color::srgb(0.0,0.8,0.2),
-                            custom_size: Some(Vec2::new(50.0, 50.0)),
+                            custom_size: Some(Vec2::new(10.0, 10.0)),
                             ..default()
                         },
                         Transform::from_xyz(x_position, y_position, 0.0),
@@ -84,7 +84,7 @@ fn setup(mut commands: Commands, grid: Res<Grid>){
                     commands.spawn((
                         Sprite{
                             color: Color::srgb(0.85,0.85,0.85),
-                            custom_size: Some(Vec2::new(50.0, 50.0)),
+                            custom_size: Some(Vec2::new(10.0, 10.0)),
                             ..default()
                         },
                         Transform::from_xyz(x_position, y_position, 0.0),
