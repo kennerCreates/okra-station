@@ -58,32 +58,46 @@ fn main() {
 
 fn setup(mut commands: Commands, grid: Res<Grid>){
     commands.spawn(Camera2d);
+    let start = Point { x: 0, y: 0 };
+    let goal = Point { x: 4, y: 4 };
+    if let Some(path) = astar(start, goal, &grid.cells){
     for (y, row) in grid.cells.iter().enumerate() {
             for (x, cell) in row.iter().enumerate() {
                 let x_position = x as f32 * 50.0;
-                let y_positon = y as f32 * 50.0; 
-                if *cell {
+                let y_position = -(y as f32) * 50.0;
+                let point = Point{x, y };
+                
+                if path.contains(&point) {
+                    commands.spawn((
+                        Sprite{
+                            color: Color::srgb(0.75,0.0,0.05),
+                            custom_size: Some(Vec2::new(50.0, 50.0)),
+                            ..default()
+                        },
+                        Transform::from_xyz(x_position, y_position, 0.0),
+                        ));
+                } else if  *cell {
                     commands.spawn((
                         Sprite{
                             color: Color::srgb(0.0,0.8,0.2),
                             custom_size: Some(Vec2::new(50.0, 50.0)),
                             ..default()
                         },
-                        Transform::from_xyz(x_position, y_positon, 0.0),
+                        Transform::from_xyz(x_position, y_position, 0.0),
                     ));
-                }
-                else {
+                }else {
                     commands.spawn((
                         Sprite{
                             color: Color::srgb(0.85,0.85,0.85),
                             custom_size: Some(Vec2::new(50.0, 50.0)),
                             ..default()
                         },
-                        Transform::from_xyz(x_position, y_positon, 0.0),
+                        Transform::from_xyz(x_position, y_position, 0.0),
                     ));
                 }   
             }
         }
+    }
 }
 
 fn oldmain(){
@@ -180,7 +194,7 @@ fn neighbors (point: Point, grid: &Vec<Vec<bool>>) -> Vec<Point> {
 fn astar(
     start: Point, 
     goal: Point, 
-grid: &Vec<Vec<bool>>,
+    grid: &Vec<Vec<bool>>,
 ) -> Option<Vec<Point>> {
     let mut open_set = BinaryHeap::new();
     let mut came_from: HashMap<Point, Point> = HashMap::new();
