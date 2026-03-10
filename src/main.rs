@@ -15,6 +15,11 @@ struct Point {
     y: usize,
 }
 
+#[derive(Resource)]
+struct Grid {
+    cells: Vec<Vec<bool>>,
+}
+
 impl Eq for Node {}
 
 impl PartialEq for Node {
@@ -38,7 +43,47 @@ impl PartialOrd for Node {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .insert_resource(Grid {
+            cells: vec![
+        vec![false, false, false, false, false],
+        vec![false, true, true, true, false],
+        vec![false, false, false, true, false],
+        vec![false, true, false, false, false],
+        vec![false, true,false, false, false],
+            ],
+        })
+        .add_systems(Startup, setup)
         .run();
+}
+
+fn setup(mut commands: Commands, grid: Res<Grid>){
+    commands.spawn(Camera2d);
+    for (y, row) in grid.cells.iter().enumerate() {
+            for (x, cell) in row.iter().enumerate() {
+                let x_position = x as f32 * 50.0;
+                let y_positon = y as f32 * 50.0; 
+                if *cell {
+                    commands.spawn((
+                        Sprite{
+                            color: Color::srgb(0.0,0.8,0.2),
+                            custom_size: Some(Vec2::new(50.0, 50.0)),
+                            ..default()
+                        },
+                        Transform::from_xyz(x_position, y_positon, 0.0),
+                    ));
+                }
+                else {
+                    commands.spawn((
+                        Sprite{
+                            color: Color::srgb(0.85,0.85,0.85),
+                            custom_size: Some(Vec2::new(50.0, 50.0)),
+                            ..default()
+                        },
+                        Transform::from_xyz(x_position, y_positon, 0.0),
+                    ));
+                }   
+            }
+        }
 }
 
 fn oldmain(){
