@@ -100,60 +100,7 @@ fn setup(mut commands: Commands, grid: Res<Grid>){
     }
 }
 
-fn oldmain(){
-    let grid = vec![
-        vec![false, false, false, false, false],
-        vec![false, true, true, true, false],
-        vec![false, false, false, true, false],
-        vec![false, true, false, false, false],
-        vec![false, true,false, false, false],
-    ];
 
-    for row in &grid {
-        for cell in row {
-            if *cell {
-                print!("#");
-            } else {
-                print!(".");
-            }
-        }
-        println!();
-    }
-
-    let start = Point { x: 0, y: 0 };
-    let goal = Point { x: 4, y: 4 };
-    
-    match astar(start, goal, &grid){
-        Some(path) => {
-            println!("\nPath found:");
-            for point in &path {
-                println! ("({}, {})", point.x, point.y);
-            }
-        }
-        None => println! ("No Path found"),
-    }
-
-    if let Some(path) = astar(start, goal, &grid) {
-        println!("\nVisualized:");
-        for (y, row) in grid.iter().enumerate() {
-            for (x, cell) in row.iter().enumerate() {
-                let point = Point{x, y };
-                if point == start {
-                    print!("S ");
-                } else if point == goal {
-                    print!("G ");
-                } else if path.contains(&point) {
-                    print!("* ");
-                } else if *cell {
-                    print!("# ");
-                } else {
-                    print!(". ");
-                }
-            }
-            println!();
-        }
-    }
-}
 fn heuristic(a: Point, b: Point) -> f32 {
     let dx = (a.x as f32 - b.x as f32).abs();
     let dy = (a.y as f32 - b.y as f32).abs();
