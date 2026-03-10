@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use std::vec;
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
+use rand::seq::IndexedRandom;
 
 #[derive(Debug, Clone, Copy)]
 struct Node {
@@ -44,13 +45,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .insert_resource(Grid {
-            cells: vec![
-        vec![false, false, false, false, false],
-        vec![false, true, true, true, false],
-        vec![false, false, false, true, false],
-        vec![false, true, false, false, false],
-        vec![false, true,false, false, false],
-            ],
+            cells: generate_maze(21,21),
         })
         .add_systems(Startup, setup)
         .run();
@@ -182,4 +177,60 @@ fn astar(
         }
     }
     None
+}
+
+fn generate_maze(width: usize, height: usize) -> Vec<Vec<bool>>{
+    let mut grid = vec![vec![true; width]; height];
+    let mut stack: Vec<Point> = Vec::new();
+    //carve starting cell
+    grid[1][1] = false;
+    stack.push(Point {x:1, y:1});
+    //main loop
+    while let Some(&current) = stack.last(){
+        let neighbors: Vec<Point> = unvisited_neighbors(&current, &grid);
+        if neighbors.len() > 0 {
+            let mut rng = rand::rng();
+            let new_point = neighbors.choose(&mut rng).unwrap();
+            let mid_point = Point {
+                x:(current.x + new_point.x)/2,
+                y:(current.y + new_point.y)/2,
+            };
+            grid[new_point.y][new_point.x] = false;
+            grid[mid_point.y][mid_point.x] = false;
+            stack.push(*new_point);
+        }
+        else{
+            //stack pop and backtrack
+            stack.pop();
+        } 
+    }
+    grid
+}
+
+fn unvisited_neighbors(point: &Point, grid: &Vec<Vec<bool>>) -> Vec<Point> {
+    let mut result = Vec::new();
+    let directions: [(i32, i32); 4] = [
+        (0,-2), //up
+        (0,2), //down
+        (-2,0), //left
+        (2, 0), //right        
+    ];
+
+    for (dx, dy) in directions{
+        let nx = point.x as i32 + dx;
+        let ny = point.y as i32 + dy;
+
+        if nx < 0 || ny < 0{
+            continue;
+        }
+
+        let nx = nx as usize;
+        let ny = ny as usize;
+
+        //in bounds AND still a wall(unvisited)
+        if ny < grid.len() && nx < grid[0].len() && grid [ny][nx]{
+            result.push(Point {x: nx, y: ny});
+        }
+    }
+    result
 }
